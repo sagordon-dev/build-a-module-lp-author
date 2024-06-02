@@ -1,10 +1,8 @@
-# Define the variables
 $securePatToken = ConvertTo-SecureString -String $env:GITHUB_PAT -AsPlainText -Force
 $serverUrl = "https://api.github.com"
 $apiVersion = "2022-11-28"
 
-
-function Connect{
+function Connect {
     param (
         $patToken,
         $serverUrl,
@@ -17,16 +15,22 @@ function Connect{
 
     # Create the headers for the request
     $headers = @{
-        "Authorization"        = "Basic $plainTextPatToken"
+        "Authorization"        = "Authorization $plainTextPatToken"
         "X-GitHub-Api-Version" = $apiVersion
     }
 
     $response = Invoke-RestMethod -Uri $serverUrl -Method Get -Headers $headers
 
-    #Output the response
+    # Branching logic to check if the connection was successful
+    if ($response) {
+        Write-Output "Connection successful"
+    }
+    else {
+        Write-Output "Connection failed"
+    }
+
     return $response
     
 }
 
-Write-Output "Connecting to GitHub API" 
 Connect -patToken $securePatToken -serverUrl $serverUrl -apiVersion $apiVersion
